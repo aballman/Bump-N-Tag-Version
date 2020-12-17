@@ -46,14 +46,14 @@ else
 fi
 
 major=$(echo $extract_string | cut -d'.' -f1) 
-major=${major:(-2)}
+major=${major:(-1)}
 minor=$(echo $extract_string | cut -d'.' -f2)
 patch=$(echo $extract_string | cut -d'.' -f3)
 build=$(echo $extract_string | cut -d'.' -f4)
 
 echo $major $minor $patch $build
 
-if [[ $build = "" ]]; then
+if [[ "$build" == "" ]]; then
     oldver=$(echo $major.$minor.$patch)
     patch=$(expr $patch + 1)
     newver=$(echo $major.$minor.$patch)
