@@ -6,11 +6,11 @@ tag_version=$2
 primary_branch=$3
 echo "Looking for file: ${file_name}"
 if [[ "$tag_version" == "true" ]]; then
-  echo "Tagging this release when complete"
+  echo "Tagging this release when run complete"
 else
-  echo "Will not tag this release"
+  echo "Will NOT be tag this run"
 fi
-echo "Treating branch ${primary_branch} as primary/HEAD"
+echo "Treating branch ${primary_branch} as HEAD"
 
 echo "Git Head Ref: ${GITHUB_HEAD_REF}"
 echo "Git Base Ref: ${GITHUB_BASE_REF}"
@@ -25,16 +25,14 @@ github_ref=""
 if test "${GITHUB_EVENT_NAME}" = "push"
 then
     github_ref=${GITHUB_REF}
-    git fetch origin $github_ref
 else
     github_ref=${GITHUB_HEAD_REF}
+    git fetch origin ${GITHUB_HEAD_REF}
 fi
 
 echo "Git Checkout"
-echo "github_ref ${github_ref}"
 
-git fetch origin ${primary_branch}
-git fetch origin ${GITHUB_HEAD_REF}
+git fetch origin $primary_branch
 git checkout $github_ref
 
 if test -f $file_name; then
@@ -82,9 +80,10 @@ if [[ "$github_ref" != "" ]]; then
   git diff --name-only origin/${primary_branch}..HEAD $github_ref
 
   version_file_updated=`git diff --name-only origin/${primary_branch}..HEAD $github_ref | grep $file_name | wc -l`
+  echo "Version Updated: ${version_file_updated}"
   if [[ $version_file_updated -ge 1 ]]; then
     echo "Version File Already Updated"
-    exit 1
+    exit 0
   fi
 
   git add -A 
