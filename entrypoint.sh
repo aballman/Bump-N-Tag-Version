@@ -1,5 +1,5 @@
 #!/bin/sh -l
-set -euox pipefail
+set -euo pipefail
 
 file_name=$1
 tag_version=$2
@@ -73,7 +73,7 @@ git diff --name-only origin/stable..HEAD $github_ref
 
 version_file_updated=`git diff --name-only origin/stable..HEAD $github_ref | grep $file_name | wc -l`
 echo "version fiole updated: " $version_file_updated
-if [[ $version_diff -ge 1 ]]; then
+if [[ $version_file_updated -ge 1 ]]; then
   echo "Version File Already Updated in this PR"
   exit 0
 fi
