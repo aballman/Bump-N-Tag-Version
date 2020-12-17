@@ -1,5 +1,5 @@
 #!/bin/sh -l
-set -euo pipefail
+set -euox pipefail
 
 file_name=$1
 tag_version=$2
@@ -65,20 +65,22 @@ echo "Updated version: $newver"
 newcontent=$(echo ${content/$oldver/$newver})
 echo $newcontent > $file_name
 
-version_file_updated=`git diff --name-only origin/stable..HEAD $github_ref | grep $file_name | wc -l`
-if [[ $version_file_updated -ge 1 ]]; then
-  echo "Version File Already Updated"
-  exit 0
+if [[ "$github_ref" != "" ]]; then 
+  version_file_updated=`git diff --name-only origin/stable..HEAD $github_ref | grep $file_name | wc -l`
+  if [[ $version_file_updated -ge 1 ]]; then
+    echo "Version File Already Updated"
+    exit 0
+  fi
+
+  git add -A 
+  git commit -m "Incremented to ${newver}"  -m "[skip ci]"
+  ([ -n "$tag_version" ] && [ "$tag_version" = "true" ]) && (git tag -a "${newver}" -m "[skip ci]") || echo "No tag created"
+
+  git show-ref
+  echo "Git Push"
+
+  git push --follow-tags "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:$github_ref
 fi
 
-git add -A 
-git commit -m "Incremented to ${newver}"  -m "[skip ci]"
-([ -n "$tag_version" ] && [ "$tag_version" = "true" ]) && (git tag -a "${newver}" -m "[skip ci]") || echo "No tag created"
-
-git show-ref
-echo "Git Push"
-
-git push --follow-tags "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:$github_ref
-
-echo "End of Action\n\n"
+echo "End of Action"
 exit 0
