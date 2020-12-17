@@ -72,6 +72,12 @@ echo "Updated version: $newver"
 newcontent=$(echo ${content/$oldver/$newver})
 echo $newcontent > $file_name
 
+version_file_updated=`git diff --name-only origin/stable..HEAD $github_ref | grep $file_name | wc -l`
+if [[ $version_diff -ge 1 ]]; then
+  echo "Version File Already Updated in this PR"
+  exit 0
+fi
+
 git add -A 
 git commit -m "Incremented to ${newver}"  -m "[skip ci]"
 ([ -n "$tag_version" ] && [ "$tag_version" = "true" ]) && (git tag -a "${newver}" -m "[skip ci]") || echo "No tag created"
@@ -81,6 +87,5 @@ echo "Git Push"
 
 git push --follow-tags "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:$github_ref
 
-
-echo "\nEnd of Action\n\n"
+echo "End of Action\n\n"
 exit 0
