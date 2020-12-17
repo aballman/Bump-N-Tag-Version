@@ -27,8 +27,6 @@ fi
 
 
 echo "Git Checkout"
-ls ./
-ls ./src/qli5/
 
 if test -f $file_name; then
     content=$(cat $file_name)
@@ -52,6 +50,8 @@ major=${major:(-2)}
 minor=$(echo $extract_string | cut -d'.' -f2)
 patch=$(echo $extract_string | cut -d'.' -f3)
 build=$(echo $extract_string | cut -d'.' -f4)
+
+echo $major $minor $patch $build
 
 if [[ $build = "" ]]; then
     oldver=$(echo $major.$minor.$patch)
