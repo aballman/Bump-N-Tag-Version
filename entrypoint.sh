@@ -51,8 +51,6 @@ minor=$(echo $extract_string | cut -d'.' -f2)
 patch=$(echo $extract_string | cut -d'.' -f3)
 build=$(echo $extract_string | cut -d'.' -f4)
 
-echo $major $minor $patch $build
-
 if [[ "$build" == "" ]]; then
     oldver=$(echo $major.$minor.$patch)
     patch=$(expr $patch + 1)
@@ -69,12 +67,9 @@ echo "Updated version: $newver"
 newcontent=$(echo ${content/$oldver/$newver})
 echo $newcontent > $file_name
 
-git diff --name-only origin/stable..HEAD $github_ref
-
 version_file_updated=`git diff --name-only origin/stable..HEAD $github_ref | grep $file_name | wc -l`
-echo "version fiole updated: " $version_file_updated
 if [[ $version_file_updated -ge 1 ]]; then
-  echo "Version File Already Updated in this PR"
+  echo "Version File Already Updated"
   exit 0
 fi
 
