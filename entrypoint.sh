@@ -24,7 +24,7 @@ fi
 
 echo "Git Checkout"
 
-git fetch origin $github_ref
+git fetch origin
 git checkout $github_ref
 
 if test -f $file_name; then
