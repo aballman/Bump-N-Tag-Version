@@ -15,18 +15,16 @@ git config --global user.name "Bump-N-Tag App"
 
 github_ref=""
 
-git fetch
-
 if test "${GITHUB_EVENT_NAME}" = "push"
 then
     github_ref=${GITHUB_REF}
 else
+    echo "Git Checkout"
     github_ref=${GITHUB_HEAD_REF}
+
+    git fetch origin $github_ref
     git checkout $github_ref
 fi
-
-
-echo "Git Checkout"
 
 if test -f $file_name; then
     content=$(cat $file_name)
