@@ -17,10 +17,6 @@ github_ref=""
 
 git fetch
 
-git branch -v
-echo ""
-git branch -v -r
-
 if test "${GITHUB_EVENT_NAME}" = "push"
 then
     github_ref=${GITHUB_REF}
@@ -31,6 +27,8 @@ fi
 
 
 echo "Git Checkout"
+ls ./
+ls ./src/qli5/
 
 if test -f $file_name; then
     content=$(cat $file_name)
@@ -43,10 +41,10 @@ extract_string=$(echo $content | awk '/^([[:space:]])*(v|ver|version|V|VER|VERSI
 echo "Extracted string: $extract_string"
 
 if [[ "$extract_string" == "" ]]; then 
-    echo "\nInvalid version string"
+    echo "Invalid version string"
     exit 0
 else
-    echo "\nValid version string found"
+    echo "Valid version string found"
 fi
 
 major=$(echo $extract_string | cut -d'.' -f1) 
@@ -65,8 +63,8 @@ else
     newver=$(echo $major.$minor.$patch.$build)
 fi
 
-echo "\nOld Ver: $oldver"
-echo "\nUpdated version: $newver" 
+echo "Old Ver: $oldver"
+echo "Updated version: $newver" 
 
 newcontent=$(echo ${content/$oldver/$newver})
 echo $newcontent > $file_name
