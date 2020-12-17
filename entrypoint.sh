@@ -69,7 +69,7 @@ echo "Updated version: $newver"
 newcontent=$(echo ${content/$oldver/$newver})
 echo $newcontent > $file_name
 
-git diff --name-only origin/stable..HEAD $github_re
+git diff --name-only origin/stable..HEAD $github_ref
 
 version_file_updated=`git diff --name-only origin/stable..HEAD $github_ref | grep $file_name | wc -l`
 if [[ $version_diff -ge 1 ]]; then
