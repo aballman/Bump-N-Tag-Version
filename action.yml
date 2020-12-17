@@ -14,6 +14,10 @@ inputs:
     description: 'States whether to create tag for this version or not'
     required: false
     default: 'false'
+  primary_branch: # id
+    description: 'Which branch to compare against for diff purposes'
+    required: true
+    default: 'main'
 outputs:
   app_version: # id of output
     description: 'Version from given file'
@@ -23,3 +27,4 @@ runs:
   args:
     - ${{ inputs.file_name }} 
     - ${{ inputs.tag_version }}
+    - ${{ inputs.primary_branch }}

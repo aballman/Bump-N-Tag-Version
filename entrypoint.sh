@@ -3,10 +3,18 @@ set -euo pipefail
 
 file_name=$1
 tag_version=$2
-echo "Input file name: $file_name : $tag_version"
+primary_branch=$3
+echo "Looking for file: ${file_name}"
+if [[ "$tag_version" == "true" ]]; then
+  echo "Tagging this release when complete"
+else
+  echo "Will not tag this release"
+fi
+echo "Treating branch ${primary_branch} as primary/HEAD"
 
 echo "Git Head Ref: ${GITHUB_HEAD_REF}"
 echo "Git Base Ref: ${GITHUB_BASE_REF}"
+echo "Git Ref: ${GITHUB_REF}"
 echo "Git Event Name: ${GITHUB_EVENT_NAME}"
 
 echo "Starting Git Operations"
@@ -14,7 +22,6 @@ git config --global user.email "Bump-N-Tag@github-action.com"
 git config --global user.name "Bump-N-Tag App"
 
 github_ref=""
-
 if test "${GITHUB_EVENT_NAME}" = "push"
 then
     github_ref=${GITHUB_REF}
@@ -24,6 +31,7 @@ else
 fi
 
 echo "Git Checkout"
+echo "github_ref ${github_ref}"
 
 git fetch origin ${GITHUB_HEAD_REF}
 git checkout $github_ref
@@ -32,6 +40,8 @@ if test -f $file_name; then
     content=$(cat $file_name)
 else
     content=$(echo "-- File doesn't exist --")
+    echo "Could not find file at path ${file_name}"
+    exit 1
 fi
 
 echo "File Content: $content"
@@ -40,7 +50,7 @@ echo "Extracted string: $extract_string"
 
 if [[ "$extract_string" == "" ]]; then 
     echo "Invalid version string"
-    exit 0
+    exit 1
 else
     echo "Valid version string found"
 fi
@@ -73,7 +83,7 @@ if [[ "$github_ref" != "" ]]; then
   version_file_updated=`git diff --name-only origin/stable..HEAD $github_ref | grep $file_name | wc -l`
   if [[ $version_file_updated -ge 1 ]]; then
     echo "Version File Already Updated"
-    exit 0
+    exit 1
   fi
 
   git add -A 
