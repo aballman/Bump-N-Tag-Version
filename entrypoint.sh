@@ -33,6 +33,7 @@ fi
 echo "Git Checkout"
 echo "github_ref ${github_ref}"
 
+git fetch origin ${primary_branch}
 git fetch origin ${GITHUB_HEAD_REF}
 git checkout $github_ref
 
@@ -78,9 +79,9 @@ newcontent=$(echo ${content/$oldver/$newver})
 echo $newcontent > $file_name
 
 if [[ "$github_ref" != "" ]]; then 
-  git diff --name-only origin/stable..HEAD $github_ref
+  git diff --name-only origin/${primary_branch}..HEAD $github_ref
 
-  version_file_updated=`git diff --name-only origin/stable..HEAD $github_ref | grep $file_name | wc -l`
+  version_file_updated=`git diff --name-only origin/${primary_branch}..HEAD $github_ref | grep $file_name | wc -l`
   if [[ $version_file_updated -ge 1 ]]; then
     echo "Version File Already Updated"
     exit 1
