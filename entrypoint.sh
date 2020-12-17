@@ -58,8 +58,11 @@ if [[ $build = "" ]]; then
     patch=$(expr $patch + 1)
     newver=$(echo $major.$minor.$patch)
 else
+    echo "oldver"
     oldver=$(echo $major.$minor.$patch.$build)
+    echo "build"
     build=$(expr $build + 1)
+    echo "newver"
     newver=$(echo $major.$minor.$patch.$build)
 fi
 
