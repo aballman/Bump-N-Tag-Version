@@ -19,12 +19,13 @@ if test "${GITHUB_EVENT_NAME}" = "push"
 then
     github_ref=${GITHUB_REF}
 else
-    echo "Git Checkout"
     github_ref=${GITHUB_HEAD_REF}
-
-    git fetch origin $github_ref
-    git checkout $github_ref
 fi
+
+echo "Git Checkout"
+
+git fetch origin $github_ref
+git checkout $github_ref
 
 if test -f $file_name; then
     content=$(cat $file_name)
@@ -66,6 +67,8 @@ newcontent=$(echo ${content/$oldver/$newver})
 echo $newcontent > $file_name
 
 if [[ "$github_ref" != "" ]]; then 
+  git diff --name-only origin/stable..HEAD $github_ref
+
   version_file_updated=`git diff --name-only origin/stable..HEAD $github_ref | grep $file_name | wc -l`
   if [[ $version_file_updated -ge 1 ]]; then
     echo "Version File Already Updated"
