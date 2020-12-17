@@ -18,13 +18,14 @@ github_ref=""
 if test "${GITHUB_EVENT_NAME}" = "push"
 then
     github_ref=${GITHUB_REF}
+    git fetch origin $github_ref
 else
     github_ref=${GITHUB_HEAD_REF}
 fi
 
 echo "Git Checkout"
 
-git fetch origin
+git fetch origin ${GITHUB_HEAD_REF}
 git checkout $github_ref
 
 if test -f $file_name; then
