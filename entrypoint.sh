@@ -9,11 +9,15 @@ echo "Git Head Ref: ${GITHUB_HEAD_REF}"
 echo "Git Base Ref: ${GITHUB_BASE_REF}"
 echo "Git Event Name: ${GITHUB_EVENT_NAME}"
 
-echo "\nStarting Git Operations"
+echo -n "Starting Git Operations"
 git config --global user.email "Bump-N-Tag@github-action.com"
 git config --global user.name "Bump-N-Tag App"
 
 github_ref=""
+
+git branch -v
+echo ""
+git branch -v -r
 
 if test "${GITHUB_EVENT_NAME}" = "push"
 then
