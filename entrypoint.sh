@@ -77,8 +77,6 @@ newcontent=$(echo ${content/$oldver/$newver})
 echo $newcontent > $file_name
 
 if [[ "$github_ref" != "" ]]; then 
-  git diff --name-only origin/${primary_branch}..HEAD $github_ref
-
   version_file_updated=`git diff --name-only origin/${primary_branch}..HEAD $github_ref | grep $file_name | wc -l`
   echo "Version Updated: ${version_file_updated}"
   if [[ $version_file_updated -ge 1 ]]; then
