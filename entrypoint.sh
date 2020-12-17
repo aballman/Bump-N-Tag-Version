@@ -58,11 +58,8 @@ if [[ "$build" == "" ]]; then
     patch=$(expr $patch + 1)
     newver=$(echo $major.$minor.$patch)
 else
-    echo "oldver"
     oldver=$(echo $major.$minor.$patch.$build)
-    echo "build"
     build=$(expr $build + 1)
-    echo "newver"
     newver=$(echo $major.$minor.$patch.$build)
 fi
 
@@ -71,6 +68,8 @@ echo "Updated version: $newver"
 
 newcontent=$(echo ${content/$oldver/$newver})
 echo $newcontent > $file_name
+
+git diff --name-only origin/stable..HEAD $github_re
 
 version_file_updated=`git diff --name-only origin/stable..HEAD $github_ref | grep $file_name | wc -l`
 if [[ $version_diff -ge 1 ]]; then
