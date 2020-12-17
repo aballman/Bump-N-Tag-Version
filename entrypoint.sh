@@ -3,17 +3,19 @@ set -e
 
 file_name=$1
 tag_version=$2
-echo "\nInput file name: $file_name : $tag_version"
+echo "Input file name: $file_name : $tag_version"
 
 echo "Git Head Ref: ${GITHUB_HEAD_REF}"
 echo "Git Base Ref: ${GITHUB_BASE_REF}"
 echo "Git Event Name: ${GITHUB_EVENT_NAME}"
 
-echo -n "Starting Git Operations"
+echo "Starting Git Operations"
 git config --global user.email "Bump-N-Tag@github-action.com"
 git config --global user.name "Bump-N-Tag App"
 
 github_ref=""
+
+git fetch
 
 git branch -v
 echo ""
