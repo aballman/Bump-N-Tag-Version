@@ -1,4 +1,4 @@
-#!/bin/sh -l
+#!/bin/bash -l
 set -euox pipefail
 
 file_name=$1
