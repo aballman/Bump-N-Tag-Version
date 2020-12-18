@@ -68,8 +68,7 @@ else
     newver=$(echo $major.$minor.$patch.$build)
 fi
 
-echo "Old Ver: $oldver"
-echo "Updated version: $newver" 
+echo "Current Version: $oldver"
 
 # TODO: Compare against HEAD branch to see if $file_name has been updated there
 # and if so, bump our revision to one more than what is on HEAD
@@ -84,6 +83,8 @@ if [[ "$github_ref" != "" ]]; then
     echo "Version File Already Updated"
     exit 0
   fi
+
+  echo "Updated Version: $newver" 
 
   newcontent=$(echo ${content/$oldver/$newver})
   echo $newcontent > $file_name
