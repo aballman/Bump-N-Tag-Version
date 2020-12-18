@@ -1,10 +1,9 @@
 #!/bin/bash -l
-set -euox pipefail
+set -euo pipefail
 
 file_name=$1
 tag_version=$2
 primary_branch=$3
-echo "Looking for file: ${file_name}"
 if [[ "$tag_version" == "true" ]]; then
   echo "Tagging this release when run complete"
 else
@@ -77,19 +76,14 @@ newcontent=$(echo ${content/$oldver/$newver})
 echo $newcontent > $file_name
 
 if [[ "$file_name" == "./"* ]]; then 
-  echo "Snipping the ./ from the filename!"
   file_name="${file_name:2}"
 fi
 
 if [[ "$github_ref" != "" ]]; then 
-  git diff --name-only origin/${primary_branch}..HEAD $github_ref 
   version_file_updated=`git diff --name-only origin/${primary_branch}..HEAD $github_ref | grep $file_name | wc -l`
-  echo "Version Updated: ${version_file_updated}"
   if [[ $version_file_updated -ge 1 ]]; then
     echo "Version File Already Updated"
     exit 0
-  else
-    echo "Didn't find $file_name in git diffs"
   fi
 
   git add -A 
@@ -100,8 +94,6 @@ if [[ "$github_ref" != "" ]]; then
   echo "Git Push"
 
   git push --follow-tags "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:$github_ref
-else
-  echo "Got here somehow!"
 fi
 
 echo "End of Action"
