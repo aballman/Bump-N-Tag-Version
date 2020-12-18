@@ -75,6 +75,9 @@ echo "Updated version: $newver"
 newcontent=$(echo ${content/$oldver/$newver})
 echo $newcontent > $file_name
 
+# TODO: Compare against HEAD branch to see if $file_name has been updated there
+# and if so, bump our revision to one more than what is on HEAD
+
 if [[ "$file_name" == "./"* ]]; then 
   file_name="${file_name:2}"
 fi
