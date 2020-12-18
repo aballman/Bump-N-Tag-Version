@@ -1,5 +1,5 @@
 #!/bin/bash -l
-set -euox pipefail
+set -euo pipefail
 
 file_name=$1
 tag_version=$2
@@ -76,6 +76,7 @@ if [[ "$file_name" == "./"* ]]; then
 fi
 
 if [[ "$github_ref" != "" ]]; then 
+  echo "filename: $file_name"
   src_diffs=`git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref | grep "src" | wc -l`
   if [[ $src_diffs -ge 1 ]]; then
     version_file_updated=`git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref | grep $file_name | wc -l`
