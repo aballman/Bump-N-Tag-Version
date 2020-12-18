@@ -84,6 +84,12 @@ if [[ "$github_ref" != "" ]]; then
   echo "after diff before if"
   if [[ $src_diffs -ge 1 ]]; then
     echo "inside if"
+    git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref
+    echo $file_name
+    git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref | grep $file_name
+    echo "now for wc"
+    git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref | grep $file_name | wc -l
+    echo "bomb"
     version_file_updated=`git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref | grep $file_name | wc -l`
     echo "version file updated: " $version_file_updated
     if [[ $version_file_updated -ge 1 ]]; then
