@@ -76,9 +76,9 @@ echo "Updated version: $newver"
 newcontent=$(echo ${content/$oldver/$newver})
 echo $newcontent > $file_name
 
-if [[ $file_name == "./"* ]]; then 
+if [[ "$file_name" == "./"* ]]; then 
   echo "Snipping the ./ from the filename!"
-  $file_name = "${file_name:2}"
+  file_name="${file_name:2}"
 fi
 
 if [[ "$github_ref" != "" ]]; then 
