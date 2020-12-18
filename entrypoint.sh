@@ -78,7 +78,9 @@ fi
 if [[ "$github_ref" != "" ]]; then 
   echo "filename: $file_name"
   src_diffs=`git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref | grep "src" | wc -l`
+  echo "after diff before if"
   if [[ $src_diffs -ge 1 ]]; then
+    echo "inside if"
     version_file_updated=`git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref | grep $file_name | wc -l`
     echo "version file updated: " $version_file_updated
     if [[ $version_file_updated -ge 1 ]]; then
