@@ -79,9 +79,12 @@ if [[ "$github_ref" != "" ]]; then
   src_diffs=`git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref | grep "src" | wc -l`
   if [[ $src_diffs -ge 1 ]]; then
     version_file_updated=`git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref | grep $file_name | wc -l`
+    echo "version file updated: " $version_file_updated
     if [[ $version_file_updated -ge 1 ]]; then
       echo "Version File Already Updated"
       exit 0
+    else
+      echo "it blow up?"
     fi
 
     echo "Current Version: $oldver"
