@@ -77,7 +77,7 @@ newcontent=$(echo ${content/$oldver/$newver})
 echo $newcontent > $file_name
 
 if [[ "$github_ref" != "" ]]; then 
-  echo "Inside the github ref!"
+  git diff --name-only origin/${primary_branch}..HEAD $github_ref 
   version_file_updated=`git diff --name-only origin/${primary_branch}..HEAD $github_ref | grep $file_name | wc -l`
   echo "Version Updated: ${version_file_updated}"
   if [[ $version_file_updated -ge 1 ]]; then
@@ -86,15 +86,15 @@ if [[ "$github_ref" != "" ]]; then
   fi
 
   git add -A 
-  git commit -m "Incremented to ${newver}"  -m "[skip ci]"
-  ([ -n "$tag_version" ] && [ "$tag_version" = "true" ]) && (git tag -a "${newver}" -m "[skip ci]") || echo "No tag created"
+  git commit -m "Incremented to ${newver}"
+  ([ -n "$tag_version" ] && [ "$tag_version" = "true" ]) && (git tag -a "${newver}" -m "${GITHUB_REPOSITORY} Release") || echo "No tag created"
 
   git show-ref
   echo "Git Push"
 
   git push --follow-tags "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:$github_ref
 else
-  echo "failed this check!"
+  echo "Got here somehow!"
 fi
 
 echo "End of Action"
