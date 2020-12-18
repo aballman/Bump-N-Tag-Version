@@ -1,5 +1,5 @@
 #!/bin/sh -l
-set -euo pipefail
+set -euox pipefail
 
 file_name=$1
 tag_version=$2
