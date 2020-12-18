@@ -76,10 +76,9 @@ if [[ "$file_name" == "./"* ]]; then
 fi
 
 if [[ "$github_ref" != "" ]]; then 
-  all_diffs=`git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref`
-  src_diffs=`echo $all_diffs | grep "src" | wc -l`
+  src_diffs=`git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref | grep "src" | wc -l`
   if [[ $src_diffs -ge 1 ]]; then
-    version_file_updated=`echo $all_diffs | grep $file_name | wc -l`
+    version_file_updated=`git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref | grep $file_name | wc -l`
     if [[ $version_file_updated -ge 1 ]]; then
       echo "Version File Already Updated"
       exit 0
