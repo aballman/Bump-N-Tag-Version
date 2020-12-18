@@ -77,6 +77,9 @@ fi
 
 if [[ "$github_ref" != "" ]]; then 
   echo "filename: $file_name"
+  git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref
+  echo "git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref | grep \"src\" | wc -l"
+  git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref | grep "src"
   src_diffs=`git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref | grep "src" | wc -l`
   echo "after diff before if"
   if [[ $src_diffs -ge 1 ]]; then
