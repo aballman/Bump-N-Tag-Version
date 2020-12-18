@@ -68,8 +68,6 @@ else
     newver=$(echo $major.$minor.$patch.$build)
 fi
 
-echo "Current Version: $oldver"
-
 # TODO: Compare against HEAD branch to see if $file_name has been updated there
 # and if so, bump our revision to one more than what is on HEAD
 
@@ -78,25 +76,32 @@ if [[ "$file_name" == "./"* ]]; then
 fi
 
 if [[ "$github_ref" != "" ]]; then 
-  version_file_updated=`git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref | grep $file_name | wc -l`
-  if [[ $version_file_updated -ge 1 ]]; then
-    echo "Version File Already Updated"
-    exit 0
+  all_diffs=`git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref`
+  src_diffs=`echo $all_diffs | grep "src" | wc -l`
+  if [[ $src_diffs -ge 1 ]]; then
+    version_file_updated=`echo $all_diffs | grep $file_name | wc -l`
+    if [[ $version_file_updated -ge 1 ]]; then
+      echo "Version File Already Updated"
+      exit 0
+    fi
+
+    echo "Current Version: $oldver"
+    echo "Updated Version: $newver" 
+
+    newcontent=$(echo ${content/$oldver/$newver})
+    echo $newcontent > $file_name
+
+    git add -A 
+    git commit -m "Incremented to ${newver}"
+    ([ -n "$tag_version" ] && [ "$tag_version" = "true" ]) && (git tag -a "${newver}" -m "${GITHUB_REPOSITORY} Release") || echo "No tag created"
+
+    git show-ref
+    echo "Git Push"
+
+    git push --follow-tags "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:$github_ref
+  else
+    echo "No Source Changes Detected, no need for new version"
   fi
-
-  echo "Updated Version: $newver" 
-
-  newcontent=$(echo ${content/$oldver/$newver})
-  echo $newcontent > $file_name
-
-  git add -A 
-  git commit -m "Incremented to ${newver}"
-  ([ -n "$tag_version" ] && [ "$tag_version" = "true" ]) && (git tag -a "${newver}" -m "${GITHUB_REPOSITORY} Release") || echo "No tag created"
-
-  git show-ref
-  echo "Git Push"
-
-  git push --follow-tags "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:$github_ref
 fi
 
 echo "End of Action"
