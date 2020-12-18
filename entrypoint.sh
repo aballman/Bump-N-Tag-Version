@@ -77,6 +77,7 @@ newcontent=$(echo ${content/$oldver/$newver})
 echo $newcontent > $file_name
 
 if [[ "$github_ref" != "" ]]; then 
+  echo "Inside the github ref!"
   version_file_updated=`git diff --name-only origin/${primary_branch}..HEAD $github_ref | grep $file_name | wc -l`
   echo "Version Updated: ${version_file_updated}"
   if [[ $version_file_updated -ge 1 ]]; then
@@ -92,6 +93,8 @@ if [[ "$github_ref" != "" ]]; then
   echo "Git Push"
 
   git push --follow-tags "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:$github_ref
+else
+  echo "failed this check!"
 fi
 
 echo "End of Action"
