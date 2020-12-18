@@ -76,6 +76,11 @@ echo "Updated version: $newver"
 newcontent=$(echo ${content/$oldver/$newver})
 echo $newcontent > $file_name
 
+if [[ $file_name == "./"* ]]; then 
+  echo "Snipping the ./ from the filename!"
+  $file_name = "${file_name:2}"
+fi
+
 if [[ "$github_ref" != "" ]]; then 
   git diff --name-only origin/${primary_branch}..HEAD $github_ref 
   version_file_updated=`git diff --name-only origin/${primary_branch}..HEAD $github_ref | grep $file_name | wc -l`
@@ -83,6 +88,8 @@ if [[ "$github_ref" != "" ]]; then
   if [[ $version_file_updated -ge 1 ]]; then
     echo "Version File Already Updated"
     exit 0
+  else
+    echo "Didn't find $file_name in git diffs"
   fi
 
   git add -A 
