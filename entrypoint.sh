@@ -76,27 +76,12 @@ if [[ "$file_name" == "./"* ]]; then
 fi
 
 if [[ "$github_ref" != "" ]]; then 
-  echo "filename: $file_name"
-  git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref
-  echo "git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref | grep \"src\" | wc -l"
-  git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref | grep "src"
-  src_diffs=`git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref | grep "src" | wc -l`
-  echo "after diff before if"
+  src_diffs=`git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref | { grep "src" || test $? = 1; }  | wc -l`
   if [[ $src_diffs -ge 1 ]]; then
-    echo "inside if"
-    git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref
-    echo $file_name
-    git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref | grep $file_name
-    echo "now for wc"
-    git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref | grep $file_name | wc -l
-    echo "bomb"
-    version_file_updated=`git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref | grep $file_name | wc -l`
-    echo "version file updated: " $version_file_updated
+    version_file_updated=`git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref | { grep $file_name || test $? = 1; } | wc -l`
     if [[ $version_file_updated -ge 1 ]]; then
       echo "Version File Already Updated"
       exit 0
-    else
-      echo "it blow up?"
     fi
 
     echo "Current Version: $oldver"
