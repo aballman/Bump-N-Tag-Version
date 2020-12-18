@@ -3,13 +3,12 @@ set -euo pipefail
 
 file_name=$1
 tag_version=$2
-primary_branch=$3
 if [[ "$tag_version" == "true" ]]; then
   echo "Tagging this release when run complete"
 else
   echo "Will NOT be tag this run"
 fi
-echo "Treating branch ${primary_branch} as HEAD"
+echo "Treating branch ${GITHUB_BASE_REF} as HEAD"
 
 echo "Git Head Ref: ${GITHUB_HEAD_REF}"
 echo "Git Base Ref: ${GITHUB_BASE_REF}"
@@ -31,7 +30,7 @@ fi
 
 echo "Git Checkout"
 
-git fetch origin $primary_branch
+git fetch origin ${GITHUB_BASE_REF}
 git checkout $github_ref
 
 if test -f $file_name; then
@@ -83,7 +82,7 @@ if [[ "$file_name" == "./"* ]]; then
 fi
 
 if [[ "$github_ref" != "" ]]; then 
-  version_file_updated=`git diff --name-only origin/${primary_branch}..HEAD $github_ref | grep $file_name | wc -l`
+  version_file_updated=`git diff --name-only origin/${GITHUB_BASE_REF}..HEAD $github_ref | grep $file_name | wc -l`
   if [[ $version_file_updated -ge 1 ]]; then
     echo "Version File Already Updated"
     exit 0
